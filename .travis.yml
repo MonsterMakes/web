@@ -7,17 +7,17 @@ node_js:
 env:
   global:
     - COMMIT=${TRAVIS_COMMIT::8}
-    - REPO=${TRAVIS_PULL_REQUEST_SLUG}
 install:
   - npm install
 before_script:
   - npm install -g gulp-cli
 script:
   - gulp
+  - export REPO=${TRAVIS_PULL_REQUEST_SLUG}
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
 after_success:
-  - docker build -f Dockerfile -t $REPO:$COMMIT .
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  - docker build -f Dockerfile -t $REPO:$COMMIT .
   - docker tag $REPO:$COMMIT $REPO:$TAG
   - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
   - docker push $REPO
