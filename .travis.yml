@@ -13,12 +13,11 @@ before_script:
   - npm install -g gulp-cli
 script:
   - gulp
-  - export REPO=${TRAVIS_PULL_REQUEST_SLUG}
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
 after_success:
-  - echo "$DOCKER_EMAIL $DOCKER_USER $DOCKER_PASS $REPO $TAG"
+  - echo "$DOCKER_EMAIL $DOCKER_USER $DOCKER_PASS $DOCKER_PROJECT $TAG"
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-  - docker build -f Dockerfile -t $REPO:$COMMIT .
-  - docker tag $REPO:$COMMIT $REPO:$TAG
-  - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
-  - docker push $REPO
+  - docker build -f Dockerfile -t $DOCKER_USER/$DOCKER_PROJECT:$COMMIT .
+  - docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:$TAG
+  - docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:travis-$TRAVIS_BUILD_NUMBER
+  - docker push $DOCKER_USER/$DOCKER_PROJECT
