@@ -1,4 +1,5 @@
 services:
+  - gulp
   - docker
 language: node_js
 env:
@@ -6,6 +7,8 @@ env:
     - COMMIT=${TRAVIS_COMMIT::8}
 install:
   - npm install
+before_script:
+  - npm install -g gulp-cli
 script:
   - gulp
 after_success:
