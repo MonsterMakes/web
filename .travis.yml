@@ -16,6 +16,7 @@ script:
   - export REPO=${TRAVIS_PULL_REQUEST_SLUG}
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
 after_success:
+  - echo "$DOCKER_EMAIL $DOCKER_USER $DOCKER_PASS $REPO $TAG"
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
   - docker build -f Dockerfile -t $REPO:$COMMIT .
   - docker tag $REPO:$COMMIT $REPO:$TAG
