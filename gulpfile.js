@@ -1,26 +1,39 @@
-var gulp = require('gulp');
-var sourcemaps = require("gulp-sourcemaps");
-var babel = require("gulp-babel");
-var concat = require("gulp-concat");
-var del = require('del');
+'use strict';
+const gulp = require('gulp');
+const sourcemaps = require("gulp-sourcemaps");
+const concat = require("gulp-concat");
+const del = require('del');
+const connect = require('gulp-connect');
 
-var DIST = "dist";
+const DIST = "dist";
 
-gulp.task('watch', function() {
-    var watcher = gulp.watch(['src/*','src/**/*'], ['default']);
-    // watcher.on('change', function(event) {
-    //   console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
-    // });
+gulp.task('default', ['clean','buildStaticFiles', 'buildJs']);
+
+gulp.task('connect', ()=> {
+  connect.server({
+    root: 'dist',
+    port: '6969',
+    livereload: true
+  });
 });
 
+gulp.task('watch', ()=> {
+    gulp.watch(['src/*','src/**/*'], ['build']);
+    gulp.watch([`${DIST}/*`,`${DIST}/**/*`], ()=> {
+      return gulp.src(DIST)
+        .pipe(connect.reload());
+    });
+});
 
-gulp.task('default', ['clean','buildStaticFiles', 'buildJs'/*,'watch'*/]);
+gulp.task('serve', ['clean','buildStaticFiles', 'buildJs','connect','watch']);
 
-gulp.task('clean', function() {
+gulp.task('clean', ()=> {
   return del([DIST+'/*'],{force:true});
 });
 
-gulp.task('buildStaticFiles',['clean'], function() {
+gulp.task('build', ['buildJs']);
+
+gulp.task('buildStaticFiles',['clean'], ()=> {
     gulp.src([
         'src/app/index.html',
         'src/app/styles/images/favicon.png',
@@ -30,12 +43,9 @@ gulp.task('buildStaticFiles',['clean'], function() {
        gulp.dest(DIST)
    );
 });
-gulp.task("buildJs", ['buildStaticFiles'],function () {
+gulp.task("buildJs", ['buildStaticFiles'], ()=> {
   return gulp.src("src/app/**/*.js")
     .pipe(sourcemaps.init())
-    .pipe(babel({
-            presets: ['es2015']
-        }))
     .pipe(concat("main.js"))
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest(DIST+"/js"));

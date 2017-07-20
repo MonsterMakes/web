@@ -1,15 +1,14 @@
 {
   "name": "monster_web",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "This is the main repo for monstermakes.com",
   "main": "index.js",
   "dependencies": {},
   "devDependencies": {
-    "babel-preset-es2015": "^6.1.2",
-    "del": "^2.0.2",
-    "gulp-babel": "^6.1.0",
-    "gulp-concat": "^2.6.0",
-    "gulp-sourcemaps": "^1.6.0"
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-connect": "^5.0.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
