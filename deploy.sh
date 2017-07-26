@@ -1,6 +1,6 @@
 #!/bin/sh
 echo "*** STARTING DEPLOYMENT ***";
-ssh -i id_rsa monster@monstermakes.tech;
+ssh -oStrictHostKeyChecking=no -i id_rsa monster@monstermakes.tech;
 ll;
 echo "*** DEPLOYMENT COMPLETE ***";
 exit;
