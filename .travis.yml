@@ -1,23 +1,25 @@
 services:
-  - gulp
-  - docker
+- gulp
+- docker
 language: node_js
-node_js:
-  node
+node_js: node
 env:
   global:
-    - COMMIT=${TRAVIS_COMMIT::8}
+  - COMMIT=${TRAVIS_COMMIT::8}
 install:
-  - npm install
+- npm install
 before_script:
-  - npm install -g gulp-cli
+- npm install -g gulp-cli
 script:
-  - gulp
-  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+- gulp
+- export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH
+  ; fi`
 after_success:
-  - echo "$DOCKER_EMAIL $DOCKER_USER $DOCKER_PASS $DOCKER_PROJECT $TAG"
-  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-  - docker build -f Dockerfile -t $DOCKER_USER/$DOCKER_PROJECT:$COMMIT .
-  - docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:$TAG
-  - docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:travis-$TRAVIS_BUILD_NUMBER
-  - docker push $DOCKER_USER/$DOCKER_PROJECT
+- docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+- docker build -f Dockerfile -t $DOCKER_USER/$DOCKER_PROJECT:$COMMIT .
+- docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:$TAG
+- docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:travis-$TRAVIS_BUILD_NUMBER
+- docker push $DOCKER_USER/$DOCKER_PROJECT
+- if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
+ openssl aes-256-cbc -K $encrypted_d06b3263fb3b_key -iv $encrypted_d06b3263fb3b_iv
+ -in id_rsa.enc -out id_rsa -d && chmod 600 id_rsa; ./deploy; fi
