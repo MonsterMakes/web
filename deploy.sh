@@ -6,7 +6,7 @@ ssh -oStrictHostKeyChecking=no -i id_rsa monster@monstermakes.tech << EOF
   docker rm web
   docker pull lockenj/web
   echo "Deploying Docker Container..."
-  docker run --name web -dit -p 80:81 --restart unless-stopped lockenj/web
+  docker run --name web -dit -p 81:81 --restart unless-stopped lockenj/web
   echo "*** DEPLOYMENT COMPLETE ***"
   exit
 EOF
