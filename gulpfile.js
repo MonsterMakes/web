@@ -36,6 +36,7 @@ gulp.task('build', ['buildJs']);
 gulp.task('buildStaticFiles',['clean'], ()=> {
     gulp.src([
         'src/app/index.html',
+        'src/app/jacoblocken.html',
         'src/app/styles/images/favicon.png',
         'src/app/styles/**/*'
     ])
