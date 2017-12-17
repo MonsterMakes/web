@@ -15,7 +15,7 @@ script:
 - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH
   ; fi`
 after_success:
-- docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+- docker login -u $DOCKER_USER -p $DOCKER_PASS
 - docker build -f Dockerfile -t $DOCKER_USER/$DOCKER_PROJECT:$COMMIT .
 - docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:$TAG
 - docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:travis-$TRAVIS_BUILD_NUMBER
