@@ -8,6 +8,23 @@
   <body>
     <img src="/images/jacoblocken.png"/>
     <style>
+      body:before {
+        content: "";
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        top: -50%;
+        left: -50%;
+        z-index: -1;
+        background: url(/images/blueprint.jpg) 0 0 repeat;
+        background-size: 20%;
+        -webkit-transform: rotate(30deg);
+        -moz-transform: rotate(30deg);
+        -ms-transform: rotate(30deg);
+        -o-transform: rotate(30deg);
+        transform: rotate(30deg);
+        opacity: 0.1;
+      }
       body {
   			text-align: center;
       }
