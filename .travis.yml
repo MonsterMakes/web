@@ -13,13 +13,15 @@ env:
   - RANCHER_STACK_NAME=monstermakes-tech-web
 before_install:
   - cd deployment
-  - wget https://releases.rancher.com/compose/$RANCHER_COMPOSE_VER/rancher-compose-linux-arm-$RANCHER_COMPOSE_VER.tar.gz -O - | tar -zx
+  - wget https://releases.rancher.com/compose/$RANCHER_COMPOSE_VER/rancher-compose-linux-amd64-$RANCHER_COMPOSE_VER.tar.gz -O - | tar -zx
   - mv rancher-compose-$RANCHER_COMPOSE_VER/rancher-compose .
   - rm -rf rancher-compose-$RANCHER_COMPOSE_VER
   - cd ../
 install:
   - npm install
 before_script:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libc6:i386 libstdc++6:i386
   - npm install -g gulp-cli
 script:
   - gulp
