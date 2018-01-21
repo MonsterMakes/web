@@ -1,6 +1,9 @@
+group: stable
+dist: trusty
+os: linux
 services:
-- gulp
-- docker
+  - gulp
+  - docker
 language: node_js
 node_js: node
 env:
@@ -10,7 +13,7 @@ env:
   - RANCHER_STACK_NAME=monstermakes-tech-web
 before_install:
   - cd deployment
-  - wget https://github.com/rancher/rancher-compose/releases/download/$RANCHER_COMPOSE_VER/rancher-compose-darwin-amd64-$RANCHER_COMPOSE_VER.tar.gz -O - | tar -zx
+  - wget https://releases.rancher.com/compose/$RANCHER_COMPOSE_VER/rancher-compose-darwin-amd64-$RANCHER_COMPOSE_VER.tar.gz -O - | tar -zx
   - mv rancher-compose-$RANCHER_COMPOSE_VER/rancher-compose .
   - rm -rf rancher-compose-$RANCHER_COMPOSE_VER
   - cd ../
