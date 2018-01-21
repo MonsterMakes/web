@@ -13,7 +13,7 @@ env:
   - RANCHER_STACK_NAME=monstermakes-tech-web
 before_install:
   - cd deployment
-  - wget https://releases.rancher.com/compose/$RANCHER_COMPOSE_VER/rancher-compose-darwin-amd64-$RANCHER_COMPOSE_VER.tar.gz -O - | tar -zx
+  - wget https://releases.rancher.com/compose/$RANCHER_COMPOSE_VER/rancher-compose-linux-arm-$RANCHER_COMPOSE_VER.tar.gz -O - | tar -zx
   - mv rancher-compose-$RANCHER_COMPOSE_VER/rancher-compose .
   - rm -rf rancher-compose-$RANCHER_COMPOSE_VER
   - cd ../
@@ -23,15 +23,17 @@ before_script:
   - npm install -g gulp-cli
 script:
   - gulp
-  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH
-    ; fi`
-after_success:
-  - docker login -u $DOCKER_USER -p $DOCKER_PASS
-  - docker build -f Dockerfile -t $DOCKER_USER/$DOCKER_PROJECT:$COMMIT .
-  - docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:$TAG
-  - docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:travis-$TRAVIS_BUILD_NUMBER
-  - docker push $DOCKER_USER/$DOCKER_PROJECT
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
   - if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
+
+    echo "**** CREATING DOCKER IMAGE AND UPLOADING TO DOCKER HUB ****";
+    docker login -u $DOCKER_USER -p $DOCKER_PASS;
+    docker build -f Dockerfile -t $DOCKER_USER/$DOCKER_PROJECT:$COMMIT .;
+    docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:$TAG;
+    docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:travis-$TRAVIS_BUILD_NUMBER;
+    docker push $DOCKER_USER/$DOCKER_PROJECT;
+
+    echo "**** DEPLOYING TO PRODUCTION ****";
     cd deployment;
     ./rancher-compose --debug -p $RANCHER_STACK_NAME up --upgrade --confirm-upgrade -d;
     cd ../;
