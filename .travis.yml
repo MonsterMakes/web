@@ -32,4 +32,4 @@ after_success:
     cd deployment;
     ./rancher-compose --debug -p $RANCHER_STACK_NAME up --upgrade --confirm-upgrade -d;
     cd ../;
-     ; fi
+    fi
