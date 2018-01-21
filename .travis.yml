@@ -13,6 +13,7 @@ before_install:
   - wget https://github.com/rancher/rancher-compose/releases/download/$RANCHER_COMPOSE_VER/rancher-compose-darwin-amd64-$RANCHER_COMPOSE_VER.tar.gz -O - | tar -zx
   - mv rancher-compose-$RANCHER_COMPOSE_VER/rancher-compose .
   - rm -rf rancher-compose-$RANCHER_COMPOSE_VER
+  - cd ../
 install:
   - npm install
 before_script:
@@ -28,7 +29,7 @@ after_success:
   - docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:travis-$TRAVIS_BUILD_NUMBER
   - docker push $DOCKER_USER/$DOCKER_PROJECT
   - if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
-    pwd;
-    ls -l ./deployment;
-    ./deployment/rancher-compose --debug -p $RANCHER_STACK_NAME up --upgrade --confirm-upgrade -d
+    cd deployment;
+    ./rancher-compose --debug -p $RANCHER_STACK_NAME up --upgrade --confirm-upgrade -d;
+    cd ../;
      ; fi
