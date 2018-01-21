@@ -37,6 +37,6 @@ script:
 
     echo "**** DEPLOYING TO PRODUCTION ****";
     cd deployment;
-    ./rancher-compose --debug -p $RANCHER_STACK_NAME up --pull --upgrade --confirm-upgrade -d;
+    ./rancher-compose --debug -p $RANCHER_STACK_NAME up --pull --force-upgrade --confirm-upgrade -d;
     cd ../;
     fi
