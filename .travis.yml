@@ -6,20 +6,28 @@ node_js: node
 env:
   global:
   - COMMIT=${TRAVIS_COMMIT::8}
+  - RANCHER_COMPOSE_VER=v0.12.5
+  - RANCHER_STACK_NAME=monstermakes-tech-web
+before_install:
+  - mkdir deploy
+  - cd deploy
+  - wget https://github.com/rancher/rancher-compose/releases/download/$RANCHER_COMPOSE_VER/rancher-compose-darwin-amd64-$RANCHER_COMPOSE_VER.tar.gz -O - | tar -zx
+  - mv rancher-compose-$RANCHER_COMPOSE_VER/rancher-compose .
+  - rm -rf rancher-compose-$RANCHER_COMPOSE_VER
 install:
-- npm install
+  - npm install
 before_script:
-- npm install -g gulp-cli
+  - npm install -g gulp-cli
 script:
-- gulp
-- export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH
-  ; fi`
+  - gulp
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH
+    ; fi`
 after_success:
-- docker login -u $DOCKER_USER -p $DOCKER_PASS
-- docker build -f Dockerfile -t $DOCKER_USER/$DOCKER_PROJECT:$COMMIT .
-- docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:$TAG
-- docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:travis-$TRAVIS_BUILD_NUMBER
-- docker push $DOCKER_USER/$DOCKER_PROJECT
-- if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
- openssl aes-256-cbc -K $encrypted_d06b3263fb3b_key -iv $encrypted_d06b3263fb3b_iv
- -in id_rsa.enc -out id_rsa -d && chmod 600 id_rsa; ./deploy.sh; fi
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
+  - docker build -f Dockerfile -t $DOCKER_USER/$DOCKER_PROJECT:$COMMIT .
+  - docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:$TAG
+  - docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:travis-$TRAVIS_BUILD_NUMBER
+  - docker push $DOCKER_USER/$DOCKER_PROJECT
+  - if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
+    ./deploy/rancher-compose --debug -p $RANCHER_STACK_NAME up --upgrade --confirm-upgrade -d
+     ; fi
