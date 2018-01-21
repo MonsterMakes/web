@@ -9,8 +9,7 @@ env:
   - RANCHER_COMPOSE_VER=v0.12.5
   - RANCHER_STACK_NAME=monstermakes-tech-web
 before_install:
-  - mkdir deploy
-  - cd deploy
+  - cd deployment
   - wget https://github.com/rancher/rancher-compose/releases/download/$RANCHER_COMPOSE_VER/rancher-compose-darwin-amd64-$RANCHER_COMPOSE_VER.tar.gz -O - | tar -zx
   - mv rancher-compose-$RANCHER_COMPOSE_VER/rancher-compose .
   - rm -rf rancher-compose-$RANCHER_COMPOSE_VER
@@ -29,5 +28,7 @@ after_success:
   - docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:travis-$TRAVIS_BUILD_NUMBER
   - docker push $DOCKER_USER/$DOCKER_PROJECT
   - if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
-    ./deploy/rancher-compose --debug -p $RANCHER_STACK_NAME up --upgrade --confirm-upgrade -d
+    pwd;
+    ls -l ./deployment;
+    ./deployment/rancher-compose --debug -p $RANCHER_STACK_NAME up --upgrade --confirm-upgrade -d
      ; fi

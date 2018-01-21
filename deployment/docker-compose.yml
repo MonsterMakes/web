@@ -1,0 +1,9 @@
+version: '2'
+services:
+  monstermakes-tech-web-app:
+    image: lockenj/web
+    stdin_open: true
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: node.type=web
