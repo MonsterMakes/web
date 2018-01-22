@@ -26,6 +26,7 @@ before_script:
 script:
   - gulp
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
+  - echo "TAG is now exported as $TAG"
   - if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
 
     echo "**** CREATING DOCKER IMAGE AND UPLOADING TO DOCKER HUB ****";
