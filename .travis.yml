@@ -25,19 +25,22 @@ before_script:
   - npm install -g gulp-cli
 script:
   - gulp
-  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
-  - echo "TAG is now exported as $TAG"
+  - export BRANCH_NAME=`echo $TRAVIS_BRANCH`
+  - export PACKAGE_VERSION=`$(node -p -e "require('./package.json').version")`
   - if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
+      echo "**** CREATING DOCKER IMAGE AND UPLOADING TO DOCKER HUB ****";
+      docker login -u $DOCKER_USER -p $DOCKER_PASS;
+      docker build -f Dockerfile -t $DOCKER_USER/$DOCKER_PROJECT:$COMMIT .;
+      #Tag with version
+      docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:$PACKAGE_VERSION;
+      #Tag with Travis Build Number
+      docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:travis-$TRAVIS_BUILD_NUMBER;
+      #Tag with Git Branch
+      docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:branch-$BRANCH_NAME;
+      docker push $DOCKER_USER/$DOCKER_PROJECT;
 
-    echo "**** CREATING DOCKER IMAGE AND UPLOADING TO DOCKER HUB ****";
-    docker login -u $DOCKER_USER -p $DOCKER_PASS;
-    docker build -f Dockerfile -t $DOCKER_USER/$DOCKER_PROJECT:$COMMIT .;
-    docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:$TAG;
-    docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:travis-$TRAVIS_BUILD_NUMBER;
-    docker push $DOCKER_USER/$DOCKER_PROJECT;
-
-    echo "**** DEPLOYING TO PRODUCTION ****";
-    cd deployment;
-    ./rancher-compose --debug -p $RANCHER_STACK_NAME up --pull --force-upgrade --confirm-upgrade -d;
-    cd ../;
+      echo "**** DEPLOYING TO PRODUCTION ****";
+      cd deployment;
+      ./rancher-compose --debug -p $RANCHER_STACK_NAME up --pull --force-upgrade --confirm-upgrade -d;
+      cd ../;
     fi

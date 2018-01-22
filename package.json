@@ -1,6 +1,6 @@
 {
   "name": "monster_web",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "This is the main repo for monstermakes.com",
   "main": "index.js",
   "dependencies": {
