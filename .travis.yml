@@ -1,4 +1,3 @@
-group: stable
 dist: trusty
 os: linux
 services:
@@ -27,19 +26,19 @@ script:
   - gulp
   - export PACKAGE_VERSION=`node -p -e "require('./package.json').version"`
   - if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
+      set -ev;
+
       echo "**** CREATING DOCKER IMAGE AND UPLOADING TO DOCKER HUB ****";
       docker login -u $DOCKER_USER -p $DOCKER_PASS;
       docker build -f Dockerfile -t $DOCKER_USER/$DOCKER_PROJECT:$COMMIT .;
-      #Tag with version
+
       docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:$PACKAGE_VERSION;
-      #Tag with Travis Build Number
       docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:travis-$TRAVIS_BUILD_NUMBER;
-      #Tag with Git Branch
       docker tag $DOCKER_USER/$DOCKER_PROJECT:$COMMIT $DOCKER_USER/$DOCKER_PROJECT:branch-$TRAVIS_BRANCH;
+
       docker push $DOCKER_USER/$DOCKER_PROJECT;
 
       echo "**** DEPLOYING TO PRODUCTION ****";
       cd deployment;
       ./rancher-compose --debug -p $RANCHER_STACK_NAME up --pull --force-upgrade --confirm-upgrade -d;
-      cd ../;
     fi
